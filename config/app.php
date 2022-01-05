@@ -165,6 +165,9 @@ return [
         /*
          * Package Service Providers...
          */
+        AzisHapidin\IndoRegion\IndoRegionServiceProvider::class,
+        Yajra\DataTables\DataTablesServiceProvider::class,
+
 
         /*
          * Application Service Providers...
@@ -229,6 +232,17 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+
+
+        /*
+        * Helper Service Providers...
+        */
+
+        'Create' => App\Helpers\Create::class,
+        'Delete' => App\Helpers\Delete::class,
+        'Retrunjson' => App\Helpers\Retrunjson::class,
+        # New Aliases
+
 
     ],
 
