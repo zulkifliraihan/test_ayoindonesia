@@ -89,4 +89,20 @@ trait ApiResponser
 			'data' => $data
 		], $code);
 	}
+
+    /**
+     * Return an error Validator JSON response.
+     *
+     * @param  string  $message
+     * @param  int  $code
+     * @param  array|string|null  $data
+     * @return \Illuminate\Http\JsonResponse
+     */
+	protected function errorvalidator(string $message = null, int $code = 400)
+	{
+        return response()->json([
+            'status' => 'fail-validator',
+            'message' => $message
+        ], $code);
+	}
 }

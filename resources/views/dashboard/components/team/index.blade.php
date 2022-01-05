@@ -19,12 +19,12 @@
                 <div class="content-header-left col-md-9 col-12 mb-2">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h2 class="content-header-title float-left mb-0">Data Barang</h2>
+                            <h2 class="content-header-title float-left mb-0">Data Teams</h2>
                             <div class="breadcrumb-wrapper">
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a>
                                     </li>
-                                    <li class="breadcrumb-item active">Data Barang
+                                    <li class="breadcrumb-item active">Data Teams
                                     </li>
                                 </ol>
                             </div>
@@ -34,9 +34,6 @@
                 <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
                     <div class="form-group breadcrumb-right">
                         <div class="dropdown">
-                            {{-- <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button" data-toggle="modal" data-target="#modalCreate">
-                                <i data-feather="plus"></i>
-                            </button> --}}
                             <a href="{{ route('admin.teams.create') }}">
                                 <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle">
                                     <i data-feather="plus"></i>

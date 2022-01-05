@@ -32,4 +32,5 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth'], 'as' => 'admin.'],
 
     Route::get('/', 'Dashboard\HomeController@index')->name('index');
     Route::resource('teams', 'Dashboard\TeamsController');
+    Route::resource('players', 'Dashboard\PlayersController');
 });

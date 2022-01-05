@@ -17,8 +17,8 @@ class CreatePlayersTable extends Migration
             $table->uuid('id')->primary();
             $table->integer('nomor_punggung')->unique();
             $table->string('nama');
-            $table->tinyInteger('tinggi_badan');
-            $table->tinyInteger('berat_badan');
+            $table->integer('tinggi_badan');
+            $table->integer('berat_badan');
             $table->string('posisi');
             $table->softDeletes();
             $table->timestamps();

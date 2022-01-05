@@ -29,6 +29,14 @@
                         </span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="d-flex align-items-center" href="{{ route('admin.players.index') }}">
+                        <i data-feather="life-buoy"></i>
+                        <span class="menu-title text-truncate" data-i18n="Dashboard">
+                            Players
+                        </span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

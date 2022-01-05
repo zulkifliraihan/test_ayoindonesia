@@ -137,10 +137,7 @@ class TeamsController extends Controller
 
         $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
-            return response()->json([
-                'status' => 'fail-validator',
-                'message' => $validator->errors()->first()
-            ], 400);
+            return $this->errorvalidator($validator->errors()->first());
         }
         // End : Validation
 
@@ -229,10 +226,7 @@ class TeamsController extends Controller
 
         $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
-            return response()->json([
-                'status' => 'fail-validator',
-                'message' => $validator->errors()->first()
-            ], 400);
+            return $this->errorvalidator($validator->errors()->first());
         }
         // End : Validation
 

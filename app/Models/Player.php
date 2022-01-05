@@ -43,4 +43,14 @@ class Player extends Model
         'berat_badan',
         'posisi',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'tinggi_badan' => 'integer',
+        'berat_badan' => 'integer',
+    ];
 }
