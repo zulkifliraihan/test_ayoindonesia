@@ -34,9 +34,11 @@
                 <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
                     <div class="form-group breadcrumb-right">
                         <div class="dropdown">
-                            <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button" data-toggle="modal" data-target="#modalCreate">
-                                <i data-feather="plus"></i>
-                            </button>
+                            <a href="{{ route('admin.players.create') }}">
+                                <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle">
+                                    <i data-feather="plus"></i>
+                                </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -54,10 +56,10 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
+                                                <th>Nama Team</th>
                                                 <th>Nama Pemain</th>
                                                 <th>Nomor Punggung</th>
-                                                <th>Tinggi Badan</th>
-                                                <th>Berat Badan</th>
+                                                <th>Data Fisik</th>
                                                 <th>Posisi</th>
                                                 <th>Action</th>
                                             </tr>
@@ -76,7 +78,6 @@
     </div>
     <!-- END: Content-->
 
-    @include('dashboard.components.player.form')
 
 @endsection
 @section('custom_js')
@@ -95,10 +96,10 @@
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', className : "text-center width-100"},
+                    {data: 'nama_team', name: 'nama_team'},
                     {data: 'nama', name: 'nama'},
                     {data: 'nomor_punggung', name: 'nomor_punggung'},
-                    {data: 'tinggi', name: 'tinggi'},
-                    {data: 'berat', name: 'berat'},
+                    {data: 'data_fisik', name: 'data_fisik'},
                     {data: 'posisi', name: 'posisi'},
                     {data: 'action', name: 'action', orderable: false, searchable: false, className : "text-center"},
                 ]
@@ -110,194 +111,5 @@
             }).draw();
         });
 
-        $('#createForm').on('submit', function(event) {
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            event.preventDefault();
-
-            Swal.fire({
-                text: "Mohon menunggu..."
-            });
-
-            Swal.showLoading();
-
-            $.ajax({
-                url: $(this).attr("action"),
-                method: "POST",
-                data:  new FormData(this),
-                processData: false,
-                contentType: false,
-                cache: false,
-                success: (data) => {
-
-                    if (data.status == "ok" && data.response == "successfully-created") {
-                        Swal.close();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Sukses',
-                            text: data.message,
-                        });
-                        setTimeout(function() {
-                            Swal.close();
-                            table.draw(false);
-                            $('#modalCreate').modal('hide');
-                        }, 1500);
-                    }
-                },
-                error: (data) => {
-                    if (data.responseJSON.status == "fail-validator") {
-                        Swal.fire({
-                            title: 'Perhatian!',
-                            text: data.responseJSON.message,
-                            icon: 'error',
-                            confirmButtonText: 'Oke'
-                        });
-                    }
-                }
-            });
-        });
-
-        $(document).on('click', '.edit-item', function(event){
-            event.preventDefault();
-
-            let playerId = $(this).data("pid");
-            let routeAction = "{{ route('admin.players.update', ':id') }}";
-            routeAction = routeAction.replace(':id', playerId);
-
-            let routeUrl = "{{ route('admin.players.edit', ':id') }}";
-            routeUrl = routeUrl.replace(':id', playerId);
-
-            $.ajax({
-                type: "GET",
-                url: routeUrl,
-                success: function (response) {
-                    $("#editForm").attr('action', routeAction);
-           
-                    $("#nama_edit").val(response.nama);
-                    $("#nomor_punggung_edit").val(response.nomor_punggung);
-                    $("#tinggi_badan_edit").val(response.tinggi_badan);
-                    $("#berat_badan_edit").val(response.berat_badan);
-                    $("#posisi_edit").val(response.posisi);
-
-                    $('#modalEdit').modal('show');
-                }
-            });
-        });
-
-        $(document).on('click', '.delete-item', function(event){
-
-            let playerId = $(this).data("pid");
-            let routeUrl = "{{ route('admin.players.destroy', ':id') }}";
-            routeUrl = routeUrl.replace(':id', playerId);
-
-            event.preventDefault();
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            event.preventDefault();
-            Swal.fire({
-                title: "Apakah yakin akan menghapus ini!?",
-                // type: "info",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: "Hapus!",
-                cancelButtonText: "Batal",
-                confirmButtonColor: "#28a745",
-                cancelButtonColor: "#dc3545",
-                // reverseButtons: true,
-                focusConfirm: true,
-                focusCancel: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.close();
-                    Swal.fire({
-                        text: "Mohon menunggu..."
-                    });
-
-                    Swal.showLoading();
-                    $.ajax({
-                        type:'DELETE',
-                        url: routeUrl,
-                        success:function(data)
-                        {
-                            if(data.status == "ok"){
-                                table.draw(false);
-                                Swal.close();
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Sukses',
-                                    text: data.message,
-                                });
-                                setTimeout(function() {
-                                    Swal.close();
-                                }, 1500);
-                            }
-                        },
-                        error: function(data){
-                        }
-                    });
-                }
-            })
-        });
-
-        $('#editForm').on('submit', function(event) {
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            event.preventDefault();
-
-            Swal.fire({
-                text: "Mohon menunggu..."
-            });
-
-            Swal.showLoading();
-
-            $.ajax({
-                url: $(this).attr("action"),
-                method: "POST",
-                data:  new FormData(this),
-                processData: false,
-                contentType: false,
-                cache: false,
-                success: (data) => {
-
-                    if (data.status == "ok" && data.response == "successfully-updated") {
-                        Swal.close();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Sukses',
-                            text: data.message,
-                        });
-                        setTimeout(function() {
-                            Swal.close();
-                            table.draw(false);
-                            $('#modalEdit').modal('hide');
-                            $("#modalEdit").load(location.href + " #modalEdit");
-                        }, 1500);
-                    }
-                },
-                error: (data) => {
-                    if (data.responseJSON.status == "fail-validator") {
-                        Swal.fire({
-                            title: 'Perhatian!',
-                            text: data.responseJSON.message,
-                            icon: 'error',
-                            confirmButtonText: 'Oke'
-                        });
-                    }
-                }
-            });
-        });
     </script>
 @endsection

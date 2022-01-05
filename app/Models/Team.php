@@ -46,6 +46,11 @@ class Team extends Model
         'alamat',
     ];
 
+    public function player()
+    {
+        return $this->hasMany(Player::class, 'team_id', 'id');
+    }
+
     public function file()
     {
         return $this->hasOne(File::class, 'id', 'file_id');

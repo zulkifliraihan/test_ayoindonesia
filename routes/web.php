@@ -31,6 +31,12 @@ Route::get('kota/{id}', 'HomeController@getKota');
 Route::group(['prefix' => 'admin',  'middleware' => ['auth'], 'as' => 'admin.'], function(){
 
     Route::get('/', 'Dashboard\HomeController@index')->name('index');
-    Route::resource('teams', 'Dashboard\TeamsController');
-    Route::resource('players', 'Dashboard\PlayersController');
+
+    Route::resources([
+        'teams' => 'Dashboard\TeamsController',
+        'players' => 'Dashboard\PlayersController',
+    ], [
+        'except' => ['show']
+    ]);
+
 });

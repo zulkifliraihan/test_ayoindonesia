@@ -30,13 +30,25 @@ class PlayersController extends Controller
      */
     public function index()
     {
-        $players = Player::all();
+        $players = Player::with('team');
 
         if (request()->ajax()) {
-            return DataTables()->of($players)
+            return DataTables()->eloquent($players)
             ->addColumn('DT_RowIndex', function ($number){
                 $i = 1;
                 return $i++;
+            })
+            ->addColumn('nama_team', function ($query){
+                return $query->team->nama;
+            })
+            ->addColumn('data_fisik', function ($query){
+                $data = '
+                <p>
+                    Berat Badan : '. $query->berat_badan .' KG <br/>
+                    Tinggi Badan : '. $query->tinggi_badan .' CM <br/>
+                </p>
+                ';
+                return $data;
             })
             ->addColumn('tinggi', function ($query){
                 return $query->tinggi_badan . "CM";
@@ -53,7 +65,7 @@ class PlayersController extends Controller
                     </a>
 
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink-1">
-                        <a class="dropdown-item edit-item" href="javascript:void(0)" data-pid="'. $action->id .'">
+                        <a class="dropdown-item edit-item" href="'. route('admin.players.edit', $action->id) .'" data-pid="'. $action->id .'">
                             Edit
                         </a>
                         <a class="dropdown-item delete-item" href="javascript:void(0);" data-pid="'. $action->id .'">
@@ -63,7 +75,7 @@ class PlayersController extends Controller
                 </div>';
                 return  $new_button_all;
             })
-            ->rawColumns(['DT_RowIndex', 'tinggi', 'berat', 'action'])
+            ->rawColumns(['DT_RowIndex', 'nama_team', 'data_fisik', 'tinggi', 'berat', 'action'])
             ->addIndexColumn()
             ->make(true);
         }
@@ -79,7 +91,13 @@ class PlayersController extends Controller
      */
     public function create()
     {
-        //
+        $teams = Team::all();
+
+        $data = [
+            'teams' => $teams
+        ];
+
+        return view('dashboard.components.player.create', $data);
     }
 
     /**
@@ -92,6 +110,7 @@ class PlayersController extends Controller
     {
         // Start : Validation
         $rules = [
+            'team_id' => 'required',
             'nama' => 'required',
             'nomor_punggung' => 'required|unique:players,nomor_punggung',
             'tinggi_badan' => 'required',
@@ -100,6 +119,7 @@ class PlayersController extends Controller
         ];
 
         $messages = [
+            'team_id.required' => 'Nama Team wajib di isi !',
             'nama.required' => 'Nama Pemain wajib di isi !',
             'nomor_punggung.required' => 'Nomor Punggung wajib di isi !',
             'nomor_punggung.unique' => 'Nomor Punggung sudah ada !',
@@ -119,8 +139,8 @@ class PlayersController extends Controller
         $player = Player::create($data);
 
         $function = "created";
-
-        return $this->success($function);
+        $route = route('admin.players.index');
+        return $this->successroute($function, $route);
 
     }
 
@@ -144,8 +164,13 @@ class PlayersController extends Controller
     public function edit($id)
     {
         $player = Player::find($id);
+        $teams = Team::all();
 
-        return $player;
+        $data = [
+            'player' => $player,
+            'teams' => $teams
+        ];
+        return view('dashboard.components.player.edit', $data);
     }
 
     /**
@@ -159,6 +184,7 @@ class PlayersController extends Controller
     {
         // Start : Validation
         $rules = [
+            'team_id' => 'required',
             'nama' => 'required',
             'nomor_punggung' => 'required',
             'tinggi_badan' => 'required',
@@ -167,6 +193,7 @@ class PlayersController extends Controller
         ];
 
         $messages = [
+            'team_id.required' => 'Nama Team wajib di isi !',
             'nama.required' => 'Nama Pemain wajib di isi !',
             'nomor_punggung.required' => 'Nomor Punggung wajib di isi !',
             'tinggi_badan.required' => 'Provinsi wajib di isi !',
@@ -186,7 +213,9 @@ class PlayersController extends Controller
 
         $function = "updated";
 
-        return $this->success($function);
+        $route = route('admin.players.index');
+        return $this->successroute($function, $route);
+        
     }
 
     /**

@@ -92,6 +92,7 @@
     @yield('custom_js')
     <!-- End: Custom JS-->
 
+
     <script>
         $(window).on('load', function() {
             if (feather) {
@@ -104,9 +105,8 @@
 
         $(document).ready(function () {
             $(function() {
-
                 var url = window.location.href;
-                $('.navigation-menu li').each(function() {
+                $('.navigation-main li').each(function() {
                     if ($('a',this).attr('href') == url) {
                         $(this).addClass('active');
                     }
@@ -130,6 +130,7 @@
         });
 
     </script>
+
 </body>
 <!-- END: Body-->
 

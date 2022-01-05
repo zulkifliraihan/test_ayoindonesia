@@ -38,6 +38,7 @@ class Player extends Model
      */
     protected $fillable = [
         'id',
+        'team_id',
         'nomor_punggung',
         'nama',
         'tinggi_badan',
@@ -54,4 +55,9 @@ class Player extends Model
         'tinggi_badan' => 'integer',
         'berat_badan' => 'integer',
     ];
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class, 'team_id', 'id');
+    }
 }
