@@ -18,8 +18,7 @@
                             <h2 class="content-header-title float-left mb-0">Edit Player</h2>
                             <div class="breadcrumb-wrapper">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a>
-                                    </li>
+
                                     <li class="breadcrumb-item"><a href="{{ route('admin.players.index') }}">Players</a>
                                     </li>
                                     <li class="breadcrumb-item active">Edit Player

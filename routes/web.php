@@ -23,14 +23,14 @@ Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('kota/{id}', 'Dashboard\ReportsController@index');
+Route::get('kota/{id}', 'HomeController@getKota');
 
 
 
 // Dashboard
 Route::group(['prefix' => 'admin',  'middleware' => ['auth'], 'as' => 'admin.'], function(){
 
-    Route::get('/', 'Dashboard\HomeController@index')->name('index');
+    // Route::get('/', 'Dashboard\HomeController@index')->name('index');
 
     Route::resources([
         'teams' => 'Dashboard\TeamsController',

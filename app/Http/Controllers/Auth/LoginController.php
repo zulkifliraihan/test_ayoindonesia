@@ -95,7 +95,7 @@ class LoginController extends Controller
             'status' => 'ok',
             'response' => 'login-user',
             'message' => 'Berhasil login!',
-            'route' => route('admin.index')
+            'route' => route('admin.teams.index')
         ], 200);
     }
 }

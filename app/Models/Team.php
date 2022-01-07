@@ -46,6 +46,17 @@ class Team extends Model
         'alamat',
     ];
 
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($team) {
+             $team->player()->delete();
+             $team->hometeam()->delete();
+             $team->guestteam()->delete();
+             $team->file()->delete();
+        });
+    }
+
     public function player()
     {
         return $this->hasMany(Player::class, 'team_id', 'id');

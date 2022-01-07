@@ -15,8 +15,7 @@
                             <h2 class="content-header-title float-left mb-0">Edit Team</h2>
                             <div class="breadcrumb-wrapper">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Home</a>
-                                    </li>
+
                                     <li class="breadcrumb-item"><a href="{{ route('admin.teams.index') }}">Teams</a>
                                     </li>
                                     <li class="breadcrumb-item active">Edit Team
@@ -103,6 +102,22 @@
     <script>
         var dropify = $('.dropify').dropify();
 
+        $(document).ready(function () {
+            let provinsi_id = $('#provinsi_id').val();
+            $.ajax({
+                type: "GET",
+                url: '/kota/' + provinsi_id,
+                dataType: "json",
+                success: function (response) {
+                    $('#kota_id').empty();
+                    $.each(response, function (key, value) {
+                        $('#kota_id').append('<option value="'+ key +'">'+ value +'</option>');
+                    });
+                }
+            });
+            $("#kota_id").val("{{ $team->kota_id }}");
+        });
+
         $('#editForm').on('submit', function(event) {
 
             $.ajaxSetup({
@@ -154,19 +169,5 @@
             });
         });
 
-        $(document).ready(function () {
-            let provinsi_id = $('#provinsi_id').val();
-            $.ajax({
-                type: "GET",
-                url: '/kota/' + provinsi_id,
-                dataType: "json",
-                success: function (response) {
-                    $('#kota_id').empty();
-                    $.each(response, function (key, value) {
-                        $('#kota_id').append('<option value="'+ key +'">'+ value +'</option>');
-                    });
-                }
-            });
-        });
     </script>
 @endsection

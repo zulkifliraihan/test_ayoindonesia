@@ -56,6 +56,14 @@ class Player extends Model
         'berat_badan' => 'integer',
     ];
 
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($team) {
+             $team->report()->delete();
+        });
+    }
+
     public function team()
     {
         return $this->belongsTo(Team::class, 'team_id', 'id');

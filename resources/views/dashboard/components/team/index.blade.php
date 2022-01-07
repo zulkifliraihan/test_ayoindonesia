@@ -22,8 +22,6 @@
                             <h2 class="content-header-title float-left mb-0">Data Teams</h2>
                             <div class="breadcrumb-wrapper">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a>
-                                    </li>
                                     <li class="breadcrumb-item active">Data Teams
                                     </li>
                                 </ol>

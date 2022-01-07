@@ -110,7 +110,7 @@
 
         $(document).on('click', '.delete-item', function(event){
 
-            let teamId = $(this).data("tid");
+            let teamId = $(this).data("pid");
             let routeUrl = "{{ route('admin.players.destroy', ':id') }}";
             routeUrl = routeUrl.replace(':id', teamId);
 
