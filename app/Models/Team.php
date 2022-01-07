@@ -51,6 +51,16 @@ class Team extends Model
         return $this->hasMany(Player::class, 'team_id', 'id');
     }
 
+    public function hometeam()
+    {
+        return $this->hasMany(Matchs::class, 'home_team', 'id');
+    }
+
+    public function guestteam()
+    {
+        return $this->hasMany(Matchs::class, 'guest_team', 'id');
+    }
+
     public function file()
     {
         return $this->hasOne(File::class, 'id', 'file_id');

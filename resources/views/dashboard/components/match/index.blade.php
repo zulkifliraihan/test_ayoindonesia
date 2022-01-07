@@ -18,12 +18,12 @@
                 <div class="content-header-left col-md-9 col-12 mb-2">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h2 class="content-header-title float-left mb-0">Data Players</h2>
+                            <h2 class="content-header-title float-left mb-0">Data Pertandingan</h2>
                             <div class="breadcrumb-wrapper">
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a>
                                     </li>
-                                    <li class="breadcrumb-item active">Data Players
+                                    <li class="breadcrumb-item active">Data Pertandingan
                                     </li>
                                 </ol>
                             </div>
@@ -33,7 +33,7 @@
                 <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
                     <div class="form-group breadcrumb-right">
                         <div class="dropdown">
-                            <a href="{{ route('admin.players.create') }}">
+                            <a href="{{ route('admin.matchs.create') }}">
                                 <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle">
                                     <i data-feather="plus"></i>
                                 </button>
@@ -51,15 +51,15 @@
                                 <div class="card-header border-bottom">
                                 </div>
                                 <div class="card-datatable datatable-user-view">
-                                    <table id="table-players" class="datatables-ajax table">
+                                    <table id="table-matchs" class="datatables-ajax table">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Nama Team</th>
-                                                <th>Nama Pemain</th>
-                                                <th>Nomor Punggung</th>
-                                                <th>Data Fisik</th>
-                                                <th>Posisi</th>
+                                                <th>Team Tuan Rumah</th>
+                                                <th>Team Tamu</th>
+                                                <th>Tanggal Tanding</th>
+                                                <th>Waktu Tanding</th>
+                                                <th>Report</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -85,19 +85,19 @@
         var table;
 
         $(function() {
-            table = $('#table-players').DataTable({
+            table = $('#table-matchs').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
-                        url: "{{ route('admin.players.index') }}",
+                        url: "{{ route('admin.matchs.index') }}",
                 },
                 columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex', className : "text-center width-50"},
-                    {data: 'nama_team', name: 'nama_team'},
-                    {data: 'nama', name: 'nama'},
-                    {data: 'nomor_punggung', name: 'nomor_punggung', className : "text-center width-100"},
-                    {data: 'data_fisik', name: 'data_fisik', className : "text-center width-200"},
-                    {data: 'posisi', name: 'posisi'},
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', className : "text-center width-100"},
+                    {data: 'tuanrumah', name: 'tuanrumah'},
+                    {data: 'tamurumah', name: 'tamurumah'},
+                    {data: 'tanggaltanding', name: 'tanggaltanding'},
+                    {data: 'waktutanding', name: 'waktutanding'},
+                    {data: 'report', name: 'report'},
                     {data: 'action', name: 'action', orderable: false, searchable: false, className : "text-center"},
                 ]
             });
@@ -110,9 +110,9 @@
 
         $(document).on('click', '.delete-item', function(event){
 
-            let teamId = $(this).data("tid");
-            let routeUrl = "{{ route('admin.players.destroy', ':id') }}";
-            routeUrl = routeUrl.replace(':id', teamId);
+            let matchId = $(this).data("mid");
+            let routeUrl = "{{ route('admin.matchs.destroy', ':id') }}";
+            routeUrl = routeUrl.replace(':id', matchId);
 
             event.preventDefault();
             $.ajaxSetup({
@@ -163,6 +163,5 @@
                 }
             })
         });
-
     </script>
 @endsection

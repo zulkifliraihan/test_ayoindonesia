@@ -23,7 +23,7 @@ Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('kota/{id}', 'HomeController@getKota');
+Route::get('kota/{id}', 'Dashboard\ReportsController@index');
 
 
 
@@ -35,8 +35,16 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth'], 'as' => 'admin.'],
     Route::resources([
         'teams' => 'Dashboard\TeamsController',
         'players' => 'Dashboard\PlayersController',
+        'matchs' => 'Dashboard\MatchsController',
     ], [
         'except' => ['show']
     ]);
+
+    Route::get('matchs/{matchId}/report', 'Dashboard\ReportsController@index')->name('matchs.report.index');
+    Route::get('matchs/{matchId}/report/create', 'Dashboard\ReportsController@create')->name('matchs.report.create');
+    Route::post('matchs/{matchId}/report/store', 'Dashboard\ReportsController@store')->name('matchs.report.store');
+    Route::get('matchs/{matchId}/report/edit', 'Dashboard\ReportsController@edit')->name('matchs.report.edit');
+    Route::put('matchs/{matchId}/report/update', 'Dashboard\ReportsController@update')->name('matchs.report.update');
+    Route::delete('matchs/{matchId}/report/destroy', 'Dashboard\ReportsController@destroy')->name('matchs.report.destroy');
 
 });

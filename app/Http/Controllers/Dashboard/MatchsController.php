@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Models\Player;
+use App\Models\Matchs;
 use App\Models\Team;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Uuid;
 
-class PlayersController extends Controller
+class MatchsController extends Controller
 {
     protected $uuid;
 
@@ -30,31 +31,46 @@ class PlayersController extends Controller
      */
     public function index()
     {
-        $players = Player::with('team');
-        
+        $matchs = Matchs::with('hometeam', 'guestteam');
+
         if (request()->ajax()) {
-            return DataTables()->eloquent($players)
+            return DataTables()->eloquent($matchs)
             ->addColumn('DT_RowIndex', function ($number){
                 $i = 1;
                 return $i++;
             })
-            ->addColumn('nama_team', function ($query){
-                return $query->team->nama;
+            ->addColumn('tuanrumah', function ($query){
+                return $query->hometeam->nama;
             })
-            ->addColumn('data_fisik', function ($query){
-                $data = '
-                <p>
-                    Berat Badan : '. $query->berat_badan .' KG <br/>
-                    Tinggi Badan : '. $query->tinggi_badan .' CM <br/>
-                </p>
-                ';
-                return $data;
+            ->addColumn('tamurumah', function ($query){
+                return $query->guestteam->nama;
             })
-            ->addColumn('tinggi', function ($query){
-                return $query->tinggi_badan . "CM";
+            ->addColumn('tanggaltanding', function ($query){
+                return Carbon::parse($query->date_match)->format('d m Y');
             })
-            ->addColumn('berat', function ($query){
-                return $query->berat_badan . "KG";
+            ->addColumn('waktutanding', function ($query){
+                return Carbon::parse($query->time_match)->format('H:i');
+            })
+            ->addColumn('report', function ($query){
+                if ($query->total_skor == null) {
+                    $button = '
+                    <a href="'. route('admin.matchs.report.create', $query->id) .'">
+                        <button type="button" class="btn btn-outline-primary btn-sm waves-effect">
+                            Create Report
+                        </button>
+                    </a>
+                    ';
+                }
+                else {
+                    $button = '
+                    <a href="'. route('admin.matchs.report.index', $query->id) .'">
+                        <button type="button" class="btn btn-outline-primary btn-sm waves-effect">
+                            Show Report
+                        </button>
+                    </a>
+                    ';
+                }
+                return $button;
             })
             ->addColumn('action', function ($action){
 
@@ -65,22 +81,22 @@ class PlayersController extends Controller
                     </a>
 
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink-1">
-                        <a class="dropdown-item edit-item" href="'. route('admin.players.edit', $action->id) .'" data-pid="'. $action->id .'">
+                        <a class="dropdown-item edit-item" href="'. route('admin.matchs.edit', $action->id) .'" data-mid="'. $action->id .'">
                             Edit
                         </a>
-                        <a class="dropdown-item delete-item" href="javascript:void(0);" data-pid="'. $action->id .'">
+                        <a class="dropdown-item delete-item" href="javascript:void(0);" data-mid="'. $action->id .'">
                             Hapus
                         </a>
                     </div>
                 </div>';
                 return  $new_button_all;
             })
-            ->rawColumns(['DT_RowIndex', 'nama_team', 'data_fisik', 'tinggi', 'berat', 'action'])
+            ->rawColumns(['DT_RowIndex', 'tuanrumah', 'tamurumah', 'tanggaltanding', 'waktutanding', 'report', 'action'])
             ->addIndexColumn()
             ->make(true);
         }
 
-        return view('dashboard.components.player.index');
+        return view('dashboard.components.match.index');
 
     }
 
@@ -97,7 +113,7 @@ class PlayersController extends Controller
             'teams' => $teams
         ];
 
-        return view('dashboard.components.player.create', $data);
+        return view('dashboard.components.match.create', $data);
     }
 
     /**
@@ -110,22 +126,17 @@ class PlayersController extends Controller
     {
         // Start : Validation
         $rules = [
-            'team_id' => 'required',
-            'nama' => 'required',
-            'nomor_punggung' => 'required|unique:players,nomor_punggung',
-            'tinggi_badan' => 'required',
-            'berat_badan' => 'required',
-            'posisi' => 'required',
+            'home_team' => 'required',
+            'guest_team' => 'required',
+            'date_match' => 'required',
+            'time_match' => 'required',
         ];
 
         $messages = [
-            'team_id.required' => 'Nama Team wajib di isi !',
-            'nama.required' => 'Nama Pemain wajib di isi !',
-            'nomor_punggung.required' => 'Nomor Punggung wajib di isi !',
-            'nomor_punggung.unique' => 'Nomor Punggung sudah ada !',
-            'tinggi_badan.required' => 'Provinsi wajib di isi !',
-            'berat_badan.required' => 'Kota wajib di isi !',
-            'posisi.required' => 'Alamat wajib di isi !',
+            'home_team.required' => 'Team Tuan Rumah wajib di isi !',
+            'guest_team.required' => 'Team Tamu wajib di isi !',
+            'date_match.required' => 'Tanggal Pertandingan wajib di isi !',
+            'time_match.required' => 'Waktu Pertandingan wajib di isi !',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -136,12 +147,11 @@ class PlayersController extends Controller
 
         $data = $request->all();
         $data['id'] = $this->uuid;
-        $player = Player::create($data);
+        $match = Matchs::create($data);
 
         $function = "created";
-        $route = route('admin.players.index');
+        $route = route('admin.matchs.index');
         return $this->successroute($function, $route);
-
     }
 
     /**
@@ -163,14 +173,15 @@ class PlayersController extends Controller
      */
     public function edit($id)
     {
-        $player = Player::find($id);
+        $match = Matchs::find($id);
         $teams = Team::all();
 
         $data = [
-            'player' => $player,
-            'teams' => $teams
+            'teams' => $teams,
+            'match' => $match
         ];
-        return view('dashboard.components.player.edit', $data);
+
+        return view('dashboard.components.match.edit', $data);
     }
 
     /**
@@ -184,21 +195,17 @@ class PlayersController extends Controller
     {
         // Start : Validation
         $rules = [
-            'team_id' => 'required',
-            'nama' => 'required',
-            'nomor_punggung' => 'required',
-            'tinggi_badan' => 'required',
-            'berat_badan' => 'required',
-            'posisi' => 'required',
+            'home_team' => 'required',
+            'guest_team' => 'required',
+            'date_match' => 'required',
+            'time_match' => 'required',
         ];
 
         $messages = [
-            'team_id.required' => 'Nama Team wajib di isi !',
-            'nama.required' => 'Nama Pemain wajib di isi !',
-            'nomor_punggung.required' => 'Nomor Punggung wajib di isi !',
-            'tinggi_badan.required' => 'Provinsi wajib di isi !',
-            'berat_badan.required' => 'Kota wajib di isi !',
-            'posisi.required' => 'Alamat wajib di isi !',
+            'home_team.required' => 'Team Tuan Rumah wajib di isi !',
+            'guest_team.required' => 'Team Tamu wajib di isi !',
+            'date_match.required' => 'Tanggal Pertandingan wajib di isi !',
+            'time_match.required' => 'Waktu Pertandingan wajib di isi !',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -208,12 +215,11 @@ class PlayersController extends Controller
         // End : Validation
 
         $data = $request->all();
-        $player = Player::find($id);
-        $player->update($data);
+        $match = Matchs::find($id);
+        $match->update($data);
 
         $function = "updated";
-
-        $route = route('admin.players.index');
+        $route = route('admin.matchs.index');
         return $this->successroute($function, $route);
 
     }
@@ -226,11 +232,11 @@ class PlayersController extends Controller
      */
     public function destroy($id)
     {
-        $player = Player::find($id)->delete();
-
+        $match = Matchs::find($id)->delete();
 
         $function = "deleted";
 
         return $this->success($function);
+
     }
 }

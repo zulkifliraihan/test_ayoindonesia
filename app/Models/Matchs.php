@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Player extends Model
+class Matchs extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -15,7 +15,7 @@ class Player extends Model
      *
      * @var string
      */
-    protected $table = 'players';
+    protected $table = 'matches';
 
     /**
      * The database primary key value.
@@ -38,31 +38,25 @@ class Player extends Model
      */
     protected $fillable = [
         'id',
-        'team_id',
-        'nomor_punggung',
-        'nama',
-        'tinggi_badan',
-        'berat_badan',
-        'posisi',
+        'home_team',
+        'guest_team',
+        'date_match',
+        'time_match',
+        'total_skor',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'tinggi_badan' => 'integer',
-        'berat_badan' => 'integer',
-    ];
-
-    public function team()
+    public function hometeam()
     {
-        return $this->belongsTo(Team::class, 'team_id', 'id');
+        return $this->belongsTo(Team::class, 'home_team', 'id');
+    }
+
+    public function guestteam()
+    {
+        return $this->belongsTo(Team::class, 'guest_team', 'id');
     }
 
     public function report()
     {
-        return $this->hasMany(Report::class, 'player_id', 'id');
+        return $this->hasMany(Report::class, 'match_id', 'id');
     }
 }

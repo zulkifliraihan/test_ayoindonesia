@@ -51,7 +51,9 @@
   // Range
   if (rangePickr.length) {
     rangePickr.flatpickr({
-      mode: 'range'
+      mode: 'range',
+      enableTime: true,
+      dateFormat: "H:i",
     });
   }
 

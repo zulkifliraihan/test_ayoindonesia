@@ -37,6 +37,14 @@
                         </span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="d-flex align-items-center" href="{{ route('admin.matchs.index') }}">
+                        <i data-feather="wind"></i>
+                        <span class="menu-title text-truncate" data-i18n="Players">
+                            Matches
+                        </span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
